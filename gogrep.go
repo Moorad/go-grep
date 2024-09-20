@@ -1,7 +1,17 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	argparser "github.com/Moorad/go-grep/internal/arg_parser"
+)
 
 func main() {
-	fmt.Println("Hello go-grep!")
+	args, err := argparser.Parse()
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("%+v", args)
 }
