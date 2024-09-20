@@ -6,8 +6,8 @@ import (
 )
 
 type ParsedArguments struct {
-	pattern  string
-	filePath string
+	Pattern  string
+	FilePath string
 }
 
 func Parse() (ParsedArguments, error) {
@@ -19,7 +19,7 @@ func Parse() (ParsedArguments, error) {
 	filename := os.Args[len(os.Args)-1]
 
 	return ParsedArguments{
-		filePath: filename,
-		pattern:  pattern,
+		FilePath: filename,
+		Pattern:  pattern,
 	}, nil
 }

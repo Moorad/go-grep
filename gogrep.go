@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	argparser "github.com/Moorad/go-grep/internal/arg_parser"
+	fileparser "github.com/Moorad/go-grep/internal/file_parser"
 )
 
 func main() {
@@ -13,5 +14,11 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Printf("%+v", args)
+	data, err := fileparser.Parse(args.FilePath)
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(data)
 }
