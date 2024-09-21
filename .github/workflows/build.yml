@@ -4,10 +4,7 @@
 name: Build & Test
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  workflow_call:
 
 jobs:
   build:
@@ -19,7 +16,6 @@ jobs:
       with:
         go-version: '1.23.1'
     - name: Build binary
-      run: go build -v ./...
-
+      run: go build
     - name: Run tests
-      run: go test -v ./...
+      run: go test
