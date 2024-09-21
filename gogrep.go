@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	argparser "github.com/Moorad/go-grep/internal/arg_parser"
 	fileparser "github.com/Moorad/go-grep/internal/file_parser"
@@ -9,26 +10,37 @@ import (
 )
 
 func main() {
-	args, err := argparser.Parse()
+	results, err := Run(os.Args[1:])
 
 	if err != nil {
 		panic(err)
 	}
 
-	data, err := fileparser.Parse(args.FilePath)
+	fmt.Println(results)
+}
+
+func Run(args []string) (string, error) {
+	parsedArgs, err := argparser.Parse(args)
 
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
-	hasMatch, err := textmatcher.MatchSingleLine(data, args.Pattern)
+	data, err := fileparser.Parse(parsedArgs.FilePath)
 
 	if err != nil {
-		panic(err)
+		return "", err
+	}
+
+	hasMatch, err := textmatcher.MatchSingleLine(&data, parsedArgs.Pattern)
+
+	if err != nil {
+		return "", err
 	}
 
 	if hasMatch {
-		fmt.Println(data)
+		return fmt.Sprintln(string(data)), nil
 	}
 
+	return "", nil
 }

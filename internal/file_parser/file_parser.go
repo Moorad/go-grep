@@ -5,12 +5,12 @@ import (
 	"os"
 )
 
-func Parse(file_path string) (string, error) {
+func Parse(file_path string) ([]byte, error) {
 	data, err := os.ReadFile(file_path)
 
 	if err != nil {
-		return "", fmt.Errorf("failed to read file\n%v", err)
+		return nil, fmt.Errorf("failed to read file\n%v", err)
 	}
 
-	return string(data), nil
+	return data, nil
 }

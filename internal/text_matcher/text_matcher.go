@@ -5,12 +5,12 @@ import (
 	"regexp"
 )
 
-func MatchSingleLine(line string, pattern string) (bool, error) {
+func MatchSingleLine(line *[]byte, pattern string) (bool, error) {
 	regex, err := regexp.Compile(pattern)
 
 	if err != nil {
 		return false, fmt.Errorf("failed to parse regex pattern\n%v", err)
 	}
 
-	return regex.Match([]byte(line)), nil
+	return regex.Match(*line), nil
 }
