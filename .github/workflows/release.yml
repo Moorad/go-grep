@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  push: 
+    branches: 
+      - main
+
+permissions:
+  contents: write
+  
+jobs:
+  build:
+    uses: Moorad/go-grep/.github/workflows/build.yml@main
+  semver-tag:
+    name: Generate semver tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Get semantic version
+        uses: paulhatch/semantic-version@v5.4.0
+        with:
+          major_pattern: "!"
+          minor_pattern: "feat"
+  go-releaser:
+    name: Run goreleaser
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.23.1
+      - name: Run Go releaser
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          args: release --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
