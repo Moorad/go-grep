@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os/exec"
 	"testing"
 )
@@ -17,6 +18,26 @@ func grepRun(args ...string) (string, error) {
 	return string(out), nil
 }
 
+func compareGrepAndMain(args []string) error {
+	stdout, err := grepRun(args...)
+
+	if err != nil {
+		return err
+	}
+
+	results, err := Run(args)
+
+	if err != nil {
+		return err
+	}
+
+	if stdout != results {
+		return fmt.Errorf("Output mismatch\nExpected:\n%v\nFound:\n%v", stdout, results)
+	}
+
+	return nil
+}
+
 // grep must be installed for tests to work
 func TestCheckGrepInstalled(t *testing.T) {
 	_, err := grepRun("--version")
@@ -26,23 +47,22 @@ func TestCheckGrepInstalled(t *testing.T) {
 	}
 }
 
-func TestSingleLine(t *testing.T) {
+func TestSingleLineFile(t *testing.T) {
 	var args = []string{"Hello", "./test_files/one-line.txt"}
 
-	stdout, err := grepRun(args...)
+	err := compareGrepAndMain(args)
 
 	if err != nil {
 		t.Error(err)
 	}
+}
 
-	results, err := Run(args)
+func TestMultiLineFile(t *testing.T) {
+	var args = []string{"blazing", "./test_files/twinkle.txt"}
+
+	err := compareGrepAndMain(args)
 
 	if err != nil {
 		t.Error(err)
 	}
-
-	if stdout != results {
-		t.Errorf("Output mismatch, exepected %v but found %v", stdout, results)
-	}
-
 }

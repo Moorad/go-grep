@@ -1,16 +1,18 @@
 package fileparser
 
 import (
-	"fmt"
+	"bufio"
 	"os"
 )
 
-func Parse(file_path string) ([]byte, error) {
-	data, err := os.ReadFile(file_path)
+func Parse(file_path string) (*bufio.Scanner, *os.File, error) {
+	file, err := os.Open(file_path)
 
 	if err != nil {
-		return nil, fmt.Errorf("failed to read file\n%v", err)
+		return nil, nil, err
 	}
 
-	return data, nil
+	scanner := bufio.NewScanner(file)
+
+	return scanner, file, nil
 }

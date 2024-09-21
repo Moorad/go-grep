@@ -26,21 +26,19 @@ func Run(args []string) (string, error) {
 		return "", err
 	}
 
-	data, err := fileparser.Parse(parsedArgs.FilePath)
+	scanner, file, err := fileparser.Parse(parsedArgs.FilePath)
 
 	if err != nil {
 		return "", err
 	}
 
-	hasMatch, err := textmatcher.MatchSingleLine(&data, parsedArgs.Pattern)
+	defer file.Close()
+
+	matchedLine, err := textmatcher.Match(scanner, file, parsedArgs.Pattern)
 
 	if err != nil {
 		return "", err
 	}
 
-	if hasMatch {
-		return fmt.Sprintln(string(data)), nil
-	}
-
-	return "", nil
+	return matchedLine, nil
 }
