@@ -7,6 +7,9 @@ on:
 
 permissions:
   contents: write
+  packages: write
+  id-token: write
+  # issues: write
   
 jobs:
   build:
@@ -21,9 +24,20 @@ jobs:
           fetch-depth: 0
       - name: Get semantic version
         uses: paulhatch/semantic-version@v5.4.0
+        id: semver
         with:
           major_pattern: "!"
           minor_pattern: "feat"
+      - name: Create tag
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/${{ steps.semver.outputs.version_tag }}',
+              sha: context.sha
+            })
   go-releaser:
     name: Run goreleaser
     runs-on: ubuntu-latest
