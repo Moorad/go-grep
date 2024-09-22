@@ -5,9 +5,12 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strings"
 )
 
 func Match(scanner *bufio.Scanner, file *os.File, pattern string) (string, error) {
+	var matches = []string{}
+
 	for scanner.Scan() {
 		line := scanner.Text()
 		hasMatch, err := MatchSingleLine(line, pattern)
@@ -17,11 +20,11 @@ func Match(scanner *bufio.Scanner, file *os.File, pattern string) (string, error
 		}
 
 		if hasMatch {
-			return fmt.Sprintln(line), nil
+			matches = append(matches, line)
 		}
 	}
 
-	return "", nil
+	return strings.Join(matches, "\n"), nil
 }
 
 func MatchSingleLine(line string, pattern string) (bool, error) {

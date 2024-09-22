@@ -16,7 +16,7 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println(results)
+	fmt.Print(results)
 }
 
 func Run(args []string) (string, error) {
@@ -34,11 +34,11 @@ func Run(args []string) (string, error) {
 
 	defer file.Close()
 
-	matchedLine, err := textmatcher.Match(scanner, file, parsedArgs.Pattern)
+	matchedLines, err := textmatcher.Match(scanner, file, parsedArgs.Pattern)
 
 	if err != nil {
 		return "", err
 	}
 
-	return matchedLine, nil
+	return fmt.Sprintln(matchedLines), nil
 }
