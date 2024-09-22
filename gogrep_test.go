@@ -66,3 +66,13 @@ func TestMultiLineFile(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestMultipleMatches(t *testing.T) {
+	var args = []string{"twinkle", "./test_files/twinkle.txt"}
+
+	err := compareGrepAndMain(args)
+
+	if err != nil {
+		t.Error(err)
+	}
+}
