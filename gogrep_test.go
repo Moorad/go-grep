@@ -7,7 +7,9 @@ import (
 )
 
 func grepRun(args ...string) (string, error) {
-	cmd := exec.Command("grep", args...)
+	cmd := exec.Command("grep", append([]string{"--color=always"}, args...)...)
+
+	cmd.Env = append(cmd.Env, "GREP_COLOR=01;34")
 
 	out, err := cmd.Output()
 

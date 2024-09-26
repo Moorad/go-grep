@@ -11,7 +11,7 @@ type ParsedArguments struct {
 
 func Parse(args []string) (ParsedArguments, error) {
 	if len(args) < 2 {
-		return ParsedArguments{}, fmt.Errorf("expected at least 2 arguments but received %v\ngo-grep [pattern] [file_path]", len(args)-1)
+		return ParsedArguments{}, fmt.Errorf("expected at least 2 arguments but %v was recieved\ngo-grep [pattern] [file_path]", len(args))
 	}
 
 	pattern := args[len(args)-2]
