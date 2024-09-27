@@ -3,14 +3,18 @@ package textmatcher
 import (
 	"bufio"
 	"fmt"
-	"os"
 	"regexp"
 	"strings"
 
 	"github.com/Moorad/go-grep/internal/formatter"
 )
 
-func Match(scanner *bufio.Scanner, file *os.File, pattern string) (string, error) {
+type MatchResult struct {
+	File string
+	Line string
+}
+
+func Match(scanner *bufio.Scanner, file string, pattern string) (MatchResult, error) {
 	var matches = []string{}
 
 	for scanner.Scan() {
@@ -18,7 +22,7 @@ func Match(scanner *bufio.Scanner, file *os.File, pattern string) (string, error
 		matchIndices, err := findLineMatches(line, pattern)
 
 		if err != nil {
-			return "", err
+			return MatchResult{}, err
 		}
 
 		if matchIndices != nil {
@@ -26,7 +30,10 @@ func Match(scanner *bufio.Scanner, file *os.File, pattern string) (string, error
 		}
 	}
 
-	return strings.Join(matches, "\n"), nil
+	return MatchResult{
+		File: file,
+		Line: strings.Join(matches, "\n"),
+	}, nil
 }
 
 func findLineMatches(line string, pattern string) ([][]int, error) {
@@ -47,7 +54,7 @@ func colorIndices(indicies [][]int, line string) string {
 
 	for i := 0; i < len(indicies); i++ {
 		// (blue) From first match char to last char
-		formattedLine += formatter.ApplyANSI(line[indicies[i][0]:indicies[i][1]], formatter.Bold, formatter.Blue)
+		formattedLine += formatter.ApplyANSI(line[indicies[i][0]:indicies[i][1]], formatter.Bold, formatter.Red)
 
 		// (no color) If there is more matches: from after last char of prev match to first char of next match
 		if i < len(indicies)-1 {
