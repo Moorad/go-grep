@@ -5,8 +5,8 @@ import (
 )
 
 type ParsedArguments struct {
-	Pattern  string
-	FilePath string
+	Pattern string
+	Files   []string
 }
 
 func Parse(args []string) (ParsedArguments, error) {
@@ -14,11 +14,13 @@ func Parse(args []string) (ParsedArguments, error) {
 		return ParsedArguments{}, fmt.Errorf("expected at least 2 arguments but %v was recieved\ngo-grep [pattern] [file_path]", len(args))
 	}
 
-	pattern := args[len(args)-2]
-	filename := args[len(args)-1]
+	pattern := args[0]
+	files := args[1:]
 
-	return ParsedArguments{
-		FilePath: filename,
-		Pattern:  pattern,
-	}, nil
+	parseArgs := ParsedArguments{
+		Files:   files,
+		Pattern: pattern,
+	}
+
+	return parseArgs, nil
 }
