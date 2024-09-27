@@ -3,14 +3,18 @@ package textmatcher
 import (
 	"bufio"
 	"fmt"
-	"os"
 	"regexp"
 	"strings"
 
 	"github.com/Moorad/go-grep/internal/formatter"
 )
 
-func Match(scanner *bufio.Scanner, file *os.File, pattern string) (string, error) {
+type MatchResult struct {
+	File string
+	Line string
+}
+
+func Match(scanner *bufio.Scanner, file string, pattern string) (MatchResult, error) {
 	var matches = []string{}
 
 	for scanner.Scan() {
@@ -18,7 +22,7 @@ func Match(scanner *bufio.Scanner, file *os.File, pattern string) (string, error
 		matchIndices, err := findLineMatches(line, pattern)
 
 		if err != nil {
-			return "", err
+			return MatchResult{}, err
 		}
 
 		if matchIndices != nil {
@@ -26,7 +30,10 @@ func Match(scanner *bufio.Scanner, file *os.File, pattern string) (string, error
 		}
 	}
 
-	return strings.Join(matches, "\n"), nil
+	return MatchResult{
+		File: file,
+		Line: strings.Join(matches, "\n"),
+	}, nil
 }
 
 func findLineMatches(line string, pattern string) ([][]int, error) {

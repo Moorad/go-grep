@@ -78,3 +78,13 @@ func TestMultipleMatches(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestMultipleFiles(t *testing.T) {
+	var args = []string{"world", "./test_files/one-line.txt", "./test_files/twinkle.txt"}
+
+	err := compareGrepAndMain(args)
+
+	if err != nil {
+		t.Error(err)
+	}
+}
