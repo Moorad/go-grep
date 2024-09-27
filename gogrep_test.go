@@ -88,3 +88,13 @@ func TestMultipleFiles(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestDuplicateFiles(t *testing.T) {
+	var args = []string{"Hello", "./test_files/one-line.txt", "./test_files/one-line.txt"}
+
+	err := compareGrepAndMain(args)
+
+	if err != nil {
+		t.Error(err)
+	}
+}

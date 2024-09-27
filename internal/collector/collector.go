@@ -19,6 +19,7 @@ func CollectMatches(args argparser.ParsedArguments, results []textmatcher.MatchR
 				}
 				output.WriteString(results[j].Line)
 				output.WriteString("\n")
+				break
 			}
 		}
 	}
