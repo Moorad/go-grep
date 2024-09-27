@@ -3,13 +3,12 @@ package main
 import (
 	"fmt"
 	"os/exec"
+	"strings"
 	"testing"
 )
 
 func grepRun(args ...string) (string, error) {
 	cmd := exec.Command("grep", append([]string{"--color=always"}, args...)...)
-
-	cmd.Env = append(cmd.Env, "GREP_COLOR=01;34")
 
 	out, err := cmd.Output()
 
@@ -42,7 +41,11 @@ func compareGrepAndMain(args []string) error {
 
 // grep must be installed for tests to work
 func TestCheckGrepInstalled(t *testing.T) {
-	_, err := grepRun("--version")
+	out, err := grepRun("--version")
+
+	if strings.Split(out, "\n")[0] != "grep (GNU grep) 3.11" {
+		fmt.Println("WARNING: Current version of grep is NOT 3.11, tests may fail.")
+	}
 
 	if err != nil {
 		t.Fatalf("The 'grep' command is not installed")

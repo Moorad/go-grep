@@ -54,7 +54,7 @@ func colorIndices(indicies [][]int, line string) string {
 
 	for i := 0; i < len(indicies); i++ {
 		// (blue) From first match char to last char
-		formattedLine += formatter.ApplyANSI(line[indicies[i][0]:indicies[i][1]], formatter.Bold, formatter.Blue)
+		formattedLine += formatter.ApplyANSI(line[indicies[i][0]:indicies[i][1]], formatter.Bold, formatter.Red)
 
 		// (no color) If there is more matches: from after last char of prev match to first char of next match
 		if i < len(indicies)-1 {

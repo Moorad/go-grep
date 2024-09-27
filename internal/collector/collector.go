@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	argparser "github.com/Moorad/go-grep/internal/arg_parser"
+	formatter "github.com/Moorad/go-grep/internal/formatter"
 	textmatcher "github.com/Moorad/go-grep/internal/text_matcher"
 )
 
@@ -15,7 +16,8 @@ func CollectMatches(args argparser.ParsedArguments, results []textmatcher.MatchR
 		for j := 0; j < len(results); j++ {
 			if results[j].File == args.Files[i] && results[j].Line != "" {
 				if len(args.Files) > 1 {
-					output.WriteString(fmt.Sprintf("%v:", results[j].File))
+					output.WriteString(
+						fmt.Sprintf("%v%v", formatter.ApplyANSI(results[j].File, formatter.Magenta), formatter.ApplyANSI(":", formatter.Cyan)))
 				}
 				output.WriteString(results[j].Line)
 				output.WriteString("\n")
