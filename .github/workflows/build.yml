@@ -21,6 +21,4 @@ jobs:
     - name: Build binary
       run: go build
     - name: Run tests
-      run: |
-          grep --version
-          go test ./... -v
+      run: go test ./... -v498e4b2682a7118248af6
