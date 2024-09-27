@@ -13,7 +13,7 @@ func CollectMatches(args argparser.ParsedArguments, results []textmatcher.MatchR
 
 	for i := 0; i < len(args.Files); i++ {
 		for j := 0; j < len(results); j++ {
-			if results[j].File == args.Files[i] {
+			if results[j].File == args.Files[i] && results[j].Line != "" {
 				if len(args.Files) > 1 {
 					output.WriteString(fmt.Sprintf("%v:", results[j].File))
 				}

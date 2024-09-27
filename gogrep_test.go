@@ -89,8 +89,28 @@ func TestMultipleFiles(t *testing.T) {
 	}
 }
 
+func TestMultipleFilesReverse(t *testing.T) {
+	var args = []string{"world", "./test_files/one-line.txt", "./test_files/twinkle.txt"}
+
+	err := compareGrepAndMain(args)
+
+	if err != nil {
+		t.Error(err)
+	}
+}
+
 func TestDuplicateFiles(t *testing.T) {
 	var args = []string{"Hello", "./test_files/one-line.txt", "./test_files/one-line.txt"}
+
+	err := compareGrepAndMain(args)
+
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestSomeFilesHaveMatches(t *testing.T) {
+	var args = []string{"Hello", "./test_files/one-line.txt", "./test_files/twinkle.txt"}
 
 	err := compareGrepAndMain(args)
 
