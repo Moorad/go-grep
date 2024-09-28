@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"strings"
 	"testing"
@@ -26,7 +27,8 @@ func compareGrepAndMain(args []string) error {
 		return err
 	}
 
-	results, err := Run(args)
+	os.Args = append([]string{"gogrep"}, args...)
+	results, err := Run()
 
 	if err != nil {
 		return err
@@ -114,6 +116,16 @@ func TestDuplicateFiles(t *testing.T) {
 
 func TestSomeFilesHaveMatches(t *testing.T) {
 	var args = []string{"Hello", "./test_files/one-line.txt", "./test_files/twinkle.txt"}
+
+	err := compareGrepAndMain(args)
+
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestCaseInsensitive(t *testing.T) {
+	var args = []string{"-i", "twinkle", "./test_files/twinkle.txt"}
 
 	err := compareGrepAndMain(args)
 
