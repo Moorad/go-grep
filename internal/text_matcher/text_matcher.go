@@ -15,12 +15,12 @@ type MatchResult struct {
 	Line string
 }
 
-func Match(scanner *bufio.Scanner, file string, options *argparser.ParsedArguments) (MatchResult, error) {
+func Match(scanner *bufio.Scanner, file string, pattern string, options *argparser.Options) (MatchResult, error) {
 	var matches = []string{}
 
 	for scanner.Scan() {
 		line := scanner.Text()
-		matchIndices, err := findLineMatches(line, options)
+		matchIndices, err := findLineMatches(line, pattern, options)
 
 		if err != nil {
 			return MatchResult{}, err
@@ -37,14 +37,14 @@ func Match(scanner *bufio.Scanner, file string, options *argparser.ParsedArgumen
 	}, nil
 }
 
-func findLineMatches(line string, options *argparser.ParsedArguments) ([][]int, error) {
+func findLineMatches(line string, pattern string, options *argparser.Options) ([][]int, error) {
 	flags := ""
 
-	if options.CaseInsensitive {
+	if options.IgnoreCase {
 		flags += "(?i)"
 	}
 
-	regex, err := regexp.Compile(flags + (*options).Pattern)
+	regex, err := regexp.Compile(flags + pattern)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse regex pattern\n%v", err)

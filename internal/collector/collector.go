@@ -9,7 +9,7 @@ import (
 	textmatcher "github.com/Moorad/go-grep/internal/text_matcher"
 )
 
-func CollectMatches(args argparser.ParsedArguments, results []textmatcher.MatchResult) string {
+func CollectMatches(args argparser.Arguments, results []textmatcher.MatchResult) string {
 	var output strings.Builder
 
 	for i := 0; i < len(args.Files); i++ {

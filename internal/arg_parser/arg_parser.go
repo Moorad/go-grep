@@ -6,9 +6,17 @@ import (
 )
 
 type ParsedArguments struct {
-	Pattern         string
-	Files           []string
-	CaseInsensitive bool
+	Arguments Arguments
+	Options   Options
+}
+
+type Arguments struct {
+	Files   []string
+	Pattern string
+}
+
+type Options struct {
+	IgnoreCase bool
 }
 
 var iFlag = flag.Bool("i", false, "ignore case sensitivity in patterns and data")
@@ -27,9 +35,13 @@ func Parse() (ParsedArguments, error) {
 	files := nonFlagArgs[1:]
 
 	parseArgs := ParsedArguments{
-		Files:           files,
-		Pattern:         pattern,
-		CaseInsensitive: *iFlag,
+		Arguments: Arguments{
+			Files:   files,
+			Pattern: pattern,
+		},
+		Options: Options{
+			IgnoreCase: *iFlag,
+		},
 	}
 
 	return parseArgs, nil

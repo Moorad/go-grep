@@ -30,7 +30,7 @@ func Run() (string, error) {
 		return "", err
 	}
 
-	numOfFiles := len(parsedArgs.Files)
+	numOfFiles := len(parsedArgs.Arguments.Files)
 
 	files := make(chan string, numOfFiles)
 	results := make(chan textmatcher.MatchResult, numOfFiles)
@@ -42,7 +42,7 @@ func Run() (string, error) {
 	}
 
 	for i := 0; i < numOfFiles; i++ {
-		files <- parsedArgs.Files[i]
+		files <- parsedArgs.Arguments.Files[i]
 	}
 
 	close(files)
@@ -57,7 +57,7 @@ func Run() (string, error) {
 
 	}
 
-	output := collector.CollectMatches(parsedArgs, matchResults)
+	output := collector.CollectMatches(parsedArgs.Arguments, matchResults)
 
 	return output, nil
 }
@@ -72,7 +72,7 @@ func worker(parsedArgs *argparser.ParsedArguments, files chan string, results ch
 
 		defer file.Close()
 
-		matchedLines, err := textmatcher.Match(scanner, filePath, parsedArgs)
+		matchedLines, err := textmatcher.Match(scanner, filePath, parsedArgs.Arguments.Pattern, &parsedArgs.Options)
 
 		if err != nil {
 			return err
