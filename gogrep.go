@@ -37,7 +37,7 @@ func Run() (string, error) {
 
 	for i := 0; i < numOfWorkers; i++ {
 		eg.Go(func() error {
-			return worker(parsedArgs.Pattern, files, results)
+			return worker(&parsedArgs, files, results)
 		})
 	}
 
@@ -62,7 +62,7 @@ func Run() (string, error) {
 	return output, nil
 }
 
-func worker(pattern string, files chan string, results chan textmatcher.MatchResult) error {
+func worker(parsedArgs *argparser.ParsedArguments, files chan string, results chan textmatcher.MatchResult) error {
 	for filePath := range files {
 		scanner, file, err := fileparser.Parse(filePath)
 
@@ -72,7 +72,7 @@ func worker(pattern string, files chan string, results chan textmatcher.MatchRes
 
 		defer file.Close()
 
-		matchedLines, err := textmatcher.Match(scanner, filePath, pattern)
+		matchedLines, err := textmatcher.Match(scanner, filePath, parsedArgs)
 
 		if err != nil {
 			return err

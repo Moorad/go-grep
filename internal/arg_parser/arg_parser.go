@@ -11,10 +11,11 @@ type ParsedArguments struct {
 	CaseInsensitive bool
 }
 
-func Parse() (ParsedArguments, error) {
-	iFlag := registerBoolFlag("i", false, "ignore case sensitivity in patterns and data")
+var iFlag = flag.Bool("i", false, "ignore case sensitivity in patterns and data")
 
+func Parse() (ParsedArguments, error) {
 	flag.Parse()
+
 	// Ignore first argument (program file path)
 	nonFlagArgs := flag.Args()
 
@@ -32,13 +33,4 @@ func Parse() (ParsedArguments, error) {
 	}
 
 	return parseArgs, nil
-}
-
-func registerBoolFlag(name string, value bool, usage string) *bool {
-	if flag.Lookup(name) == nil {
-		return flag.Bool(name, value, usage)
-	}
-
-	val := flag.Lookup(name).Value.(flag.Getter).Get().(bool)
-	return &val
 }

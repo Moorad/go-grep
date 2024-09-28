@@ -6,6 +6,7 @@ import (
 	"regexp"
 	"strings"
 
+	argparser "github.com/Moorad/go-grep/internal/arg_parser"
 	"github.com/Moorad/go-grep/internal/formatter"
 )
 
@@ -14,12 +15,12 @@ type MatchResult struct {
 	Line string
 }
 
-func Match(scanner *bufio.Scanner, file string, pattern string) (MatchResult, error) {
+func Match(scanner *bufio.Scanner, file string, options *argparser.ParsedArguments) (MatchResult, error) {
 	var matches = []string{}
 
 	for scanner.Scan() {
 		line := scanner.Text()
-		matchIndices, err := findLineMatches(line, pattern)
+		matchIndices, err := findLineMatches(line, options)
 
 		if err != nil {
 			return MatchResult{}, err
@@ -36,8 +37,14 @@ func Match(scanner *bufio.Scanner, file string, pattern string) (MatchResult, er
 	}, nil
 }
 
-func findLineMatches(line string, pattern string) ([][]int, error) {
-	regex, err := regexp.Compile(pattern)
+func findLineMatches(line string, options *argparser.ParsedArguments) ([][]int, error) {
+	flags := ""
+
+	if options.CaseInsensitive {
+		flags += "(?i)"
+	}
+
+	regex, err := regexp.Compile(flags + (*options).Pattern)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse regex pattern\n%v", err)
