@@ -6,7 +6,7 @@ A simple clone of [grep](https://en.wikipedia.org/wiki/Grep) written in go
 - [x] Search a single file for exact match
 - [x] Setup pipeline and auto-release
 - [x] Search multiple files for exact match
-- [ ] Case insensitive matching (-i)
+- [x] Case insensitive matching (-i)
 - [ ] Count number of matches (-c)
 - [ ] Match whole words (-w)
 - [ ] Display only the matched patterns (-o)

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 
 	argparser "github.com/Moorad/go-grep/internal/arg_parser"
 	"github.com/Moorad/go-grep/internal/collector"
@@ -14,7 +13,7 @@ import (
 const numOfWorkers = 5
 
 func main() {
-	results, err := Run(os.Args[1:])
+	results, err := Run()
 
 	if err != nil {
 		panic(err)
@@ -23,27 +22,27 @@ func main() {
 	fmt.Print(results)
 }
 
-func Run(args []string) (string, error) {
-	parsedArgs, err := argparser.Parse(args)
+func Run() (string, error) {
+	parsedArgs, err := argparser.Parse()
 	eg := new(errgroup.Group)
 
 	if err != nil {
 		return "", err
 	}
 
-	numOfFiles := len(parsedArgs.Files)
+	numOfFiles := len(parsedArgs.Arguments.Files)
 
 	files := make(chan string, numOfFiles)
 	results := make(chan textmatcher.MatchResult, numOfFiles)
 
 	for i := 0; i < numOfWorkers; i++ {
 		eg.Go(func() error {
-			return worker(parsedArgs.Pattern, files, results)
+			return worker(&parsedArgs, files, results)
 		})
 	}
 
 	for i := 0; i < numOfFiles; i++ {
-		files <- parsedArgs.Files[i]
+		files <- parsedArgs.Arguments.Files[i]
 	}
 
 	close(files)
@@ -58,12 +57,12 @@ func Run(args []string) (string, error) {
 
 	}
 
-	output := collector.CollectMatches(parsedArgs, matchResults)
+	output := collector.CollectMatches(parsedArgs.Arguments, matchResults)
 
 	return output, nil
 }
 
-func worker(pattern string, files chan string, results chan textmatcher.MatchResult) error {
+func worker(parsedArgs *argparser.ParsedArguments, files chan string, results chan textmatcher.MatchResult) error {
 	for filePath := range files {
 		scanner, file, err := fileparser.Parse(filePath)
 
@@ -73,7 +72,7 @@ func worker(pattern string, files chan string, results chan textmatcher.MatchRes
 
 		defer file.Close()
 
-		matchedLines, err := textmatcher.Match(scanner, filePath, pattern)
+		matchedLines, err := textmatcher.Match(scanner, filePath, parsedArgs.Arguments.Pattern, &parsedArgs.Options)
 
 		if err != nil {
 			return err
