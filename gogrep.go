@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"os"
 
 	argparser "github.com/Moorad/go-grep/internal/arg_parser"
 	"github.com/Moorad/go-grep/internal/collector"
@@ -14,7 +13,7 @@ import (
 const numOfWorkers = 5
 
 func main() {
-	results, err := Run(os.Args[1:])
+	results, err := Run()
 
 	if err != nil {
 		panic(err)
@@ -23,8 +22,8 @@ func main() {
 	fmt.Print(results)
 }
 
-func Run(args []string) (string, error) {
-	parsedArgs, err := argparser.Parse(args)
+func Run() (string, error) {
+	parsedArgs, err := argparser.Parse()
 	eg := new(errgroup.Group)
 
 	if err != nil {
