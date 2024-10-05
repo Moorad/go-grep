@@ -28,3 +28,14 @@ func CollectMatches(args argparser.Arguments, results []textmatcher.MatchResult)
 
 	return output.String()
 }
+
+func CountMatches(results []textmatcher.MatchResult) int {
+	counter := 0
+	for i := 0; i < len(results); i++ {
+		if results[i].Line != "" {
+			counter += len(strings.Split(results[i].Line, "\n"))
+		}
+	}
+
+	return counter
+}

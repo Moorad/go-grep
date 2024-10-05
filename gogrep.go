@@ -57,7 +57,13 @@ func Run() (string, error) {
 
 	}
 
-	output := collector.CollectMatches(parsedArgs.Arguments, matchResults)
+	var output string
+
+	if parsedArgs.Options.Count {
+		output = fmt.Sprintf("%v\n", collector.CountMatches(matchResults))
+	} else {
+		output = collector.CollectMatches(parsedArgs.Arguments, matchResults)
+	}
 
 	return output, nil
 }

@@ -133,3 +133,13 @@ func TestCaseInsensitive(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestCountSingleFileMatches(t *testing.T) {
+	var args = []string{"-c", "twinkle", "./test_files/twinkle.txt"}
+
+	err := compareGrepAndMain(args)
+
+	if err != nil {
+		t.Error(err)
+	}
+}

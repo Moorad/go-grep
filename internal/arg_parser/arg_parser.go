@@ -17,9 +17,11 @@ type Arguments struct {
 
 type Options struct {
 	IgnoreCase bool
+	Count      bool
 }
 
 var iFlag = flag.Bool("i", false, "ignore case sensitivity in patterns and data")
+var cFlag = flag.Bool("c", false, "print the count of selected lines per file")
 
 func Parse() (ParsedArguments, error) {
 	flag.Parse()
@@ -41,6 +43,7 @@ func Parse() (ParsedArguments, error) {
 		},
 		Options: Options{
 			IgnoreCase: *iFlag,
+			Count:      *cFlag,
 		},
 	}
 
