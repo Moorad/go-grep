@@ -53,16 +53,15 @@ func runGrep(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	matchResults := make([]textmatcher.MatchResult, numOfFiles)
+	matchResults := []textmatcher.MatchResult{}
 	for i := 0; i < numOfFiles; i++ {
 		matchResults = append(matchResults, <-results)
-
 	}
 
 	var output string
 
 	if argparser.ParsedOptions.Count {
-		output = fmt.Sprintf("%v\n", workers.CountMatches(matchResults))
+		output = workers.CountMatches(parsedArguments, matchResults)
 	} else {
 		output = workers.CollectMatches(parsedArguments, matchResults)
 	}

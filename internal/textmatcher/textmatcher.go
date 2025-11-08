@@ -27,7 +27,7 @@ func Match(scanner *bufio.Scanner, file string, pattern string, options *argpars
 		}
 
 		if matchIndices != nil {
-			matches = append(matches, colorIndices(matchIndices, line))
+			matches = append(matches, formatter.ColorRanges(line, matchIndices))
 		}
 	}
 
@@ -53,24 +53,4 @@ func findLineMatches(line string, pattern string, options *argparser.Options) ([
 	matchedText := regex.FindAllIndex([]byte(line), -1)
 
 	return matchedText, nil
-}
-
-func colorIndices(indicies [][]int, line string) string {
-	// (no color) From start to before first match
-	formattedLine := line[0:indicies[0][0]]
-
-	for i := 0; i < len(indicies); i++ {
-		// (blue) From first match char to last char
-		formattedLine += formatter.ApplyANSI(line[indicies[i][0]:indicies[i][1]], formatter.Bold, formatter.Red)
-
-		// (no color) If there is more matches: from after last char of prev match to first char of next match
-		if i < len(indicies)-1 {
-			formattedLine += line[indicies[i][1]:indicies[i+1][0]]
-		}
-	}
-
-	// (no color) From last char of last match to the end of the line
-	formattedLine += line[indicies[len(indicies)-1][1]:]
-
-	return formattedLine
 }

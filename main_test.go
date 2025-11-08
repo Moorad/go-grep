@@ -148,3 +148,23 @@ func TestCountSingleFileMatches(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestCountMultiFileMatches(t *testing.T) {
+	var args = []string{"-c", "world", "./test_files/one-line.txt", "./test_files/twinkle.txt"}
+
+	err := compareParityWithGrep(args)
+
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestCountMultiFileWithSingleFileMatch(t *testing.T) {
+	var args = []string{"-c", "twinkle", "./test_files/one-line.txt", "./test_files/twinkle.txt"}
+
+	err := compareParityWithGrep(args)
+
+	if err != nil {
+		t.Error(err)
+	}
+}

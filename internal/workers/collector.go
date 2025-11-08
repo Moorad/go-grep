@@ -12,14 +12,13 @@ import (
 func CollectMatches(args argparser.Arguments, results []textmatcher.MatchResult) string {
 	var output strings.Builder
 
-	for i := 0; i < len(args.Files); i++ {
-		for j := 0; j < len(results); j++ {
-			if results[j].File == args.Files[i] && results[j].Line != "" {
+	for _, currentFile := range args.Files {
+		for _, result := range results {
+			if result.File == currentFile && result.Line != "" {
 				if len(args.Files) > 1 {
-					output.WriteString(
-						fmt.Sprintf("%v%v", formatter.ApplyANSI(results[j].File, formatter.Magenta), formatter.ApplyANSI(":", formatter.Cyan)))
+					formatter.PrintMatchedFileName(&output, result.File)
 				}
-				output.WriteString(results[j].Line)
+				output.WriteString(result.Line)
 				output.WriteString("\n")
 				break
 			}
@@ -29,13 +28,33 @@ func CollectMatches(args argparser.Arguments, results []textmatcher.MatchResult)
 	return output.String()
 }
 
-func CountMatches(results []textmatcher.MatchResult) int {
-	counter := 0
+func CountMatches(args argparser.Arguments, results []textmatcher.MatchResult) string {
+	var fileCounter = make(map[string]int)
+	var output strings.Builder
+
 	for i := 0; i < len(results); i++ {
+		_, ok := fileCounter[results[i].File]
+
+		if !ok {
+			fileCounter[results[i].File] = 0
+		}
+
 		if results[i].Line != "" {
-			counter += len(strings.Split(results[i].Line, "\n"))
+			fileCounter[results[i].File] += len(strings.Split(results[i].Line, "\n"))
 		}
 	}
 
-	return counter
+	// Looping through args.Files instead of fileCounter because fileCounter is not sorted by insertion
+	for _, currentFile := range args.Files {
+		count := fileCounter[currentFile]
+
+		if len(args.Files) > 1 {
+			formatter.PrintMatchedFileName(&output, currentFile)
+		}
+		output.WriteString(fmt.Sprint(count))
+		output.WriteString("\n")
+
+	}
+
+	return output.String()
 }
