@@ -1,12 +1,12 @@
-package collector
+package workers
 
 import (
 	"fmt"
 	"strings"
 
-	argparser "github.com/Moorad/go-grep/internal/arg_parser"
+	argparser "github.com/Moorad/go-grep/internal/argparser"
 	formatter "github.com/Moorad/go-grep/internal/formatter"
-	textmatcher "github.com/Moorad/go-grep/internal/text_matcher"
+	textmatcher "github.com/Moorad/go-grep/internal/textmatcher"
 )
 
 func CollectMatches(args argparser.Arguments, results []textmatcher.MatchResult) string {

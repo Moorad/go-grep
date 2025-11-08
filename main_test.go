@@ -1,8 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
-	"os"
+	"io"
 	"os/exec"
 	"strings"
 	"testing"
@@ -20,22 +21,26 @@ func grepRun(args ...string) (string, error) {
 	return string(out), nil
 }
 
-func compareGrepAndMain(args []string) error {
-	stdout, err := grepRun(args...)
+func compareParityWithGrep(args []string) error {
+	grepOutput, err := grepRun(args...)
 
 	if err != nil {
 		return err
 	}
 
-	os.Args = append([]string{"gogrep"}, args...)
-	results, err := Run()
+	outputBuff := bytes.NewBufferString("")
 
-	if err != nil {
-		return err
-	}
+	rootCmd.SetOut(outputBuff)
+	rootCmd.SetErr(outputBuff)
+	rootCmd.SetArgs(args)
+	rootCmd.Execute()
 
-	if stdout != results {
-		return fmt.Errorf("Output mismatch\nExpected:\n%v\nFound:\n%v", stdout, results)
+	output, err := io.ReadAll(outputBuff)
+
+	gogrepOutput := string(output)
+
+	if grepOutput != gogrepOutput {
+		return fmt.Errorf("Output mismatch\nExpected:\n%v\nFound:\n%v", grepOutput, gogrepOutput)
 	}
 
 	return nil
@@ -57,7 +62,7 @@ func TestCheckGrepInstalled(t *testing.T) {
 func TestSingleLineFile(t *testing.T) {
 	var args = []string{"Hello", "./test_files/one-line.txt"}
 
-	err := compareGrepAndMain(args)
+	err := compareParityWithGrep(args)
 
 	if err != nil {
 		t.Error(err)
@@ -67,7 +72,7 @@ func TestSingleLineFile(t *testing.T) {
 func TestMultiLineFile(t *testing.T) {
 	var args = []string{"blazing", "./test_files/twinkle.txt"}
 
-	err := compareGrepAndMain(args)
+	err := compareParityWithGrep(args)
 
 	if err != nil {
 		t.Error(err)
@@ -77,7 +82,7 @@ func TestMultiLineFile(t *testing.T) {
 func TestMultipleMatches(t *testing.T) {
 	var args = []string{"twinkle", "./test_files/twinkle.txt"}
 
-	err := compareGrepAndMain(args)
+	err := compareParityWithGrep(args)
 
 	if err != nil {
 		t.Error(err)
@@ -87,7 +92,7 @@ func TestMultipleMatches(t *testing.T) {
 func TestMultipleFiles(t *testing.T) {
 	var args = []string{"world", "./test_files/one-line.txt", "./test_files/twinkle.txt"}
 
-	err := compareGrepAndMain(args)
+	err := compareParityWithGrep(args)
 
 	if err != nil {
 		t.Error(err)
@@ -97,7 +102,7 @@ func TestMultipleFiles(t *testing.T) {
 func TestMultipleFilesReverse(t *testing.T) {
 	var args = []string{"world", "./test_files/one-line.txt", "./test_files/twinkle.txt"}
 
-	err := compareGrepAndMain(args)
+	err := compareParityWithGrep(args)
 
 	if err != nil {
 		t.Error(err)
@@ -107,7 +112,7 @@ func TestMultipleFilesReverse(t *testing.T) {
 func TestDuplicateFiles(t *testing.T) {
 	var args = []string{"Hello", "./test_files/one-line.txt", "./test_files/one-line.txt"}
 
-	err := compareGrepAndMain(args)
+	err := compareParityWithGrep(args)
 
 	if err != nil {
 		t.Error(err)
@@ -117,7 +122,7 @@ func TestDuplicateFiles(t *testing.T) {
 func TestSomeFilesHaveMatches(t *testing.T) {
 	var args = []string{"Hello", "./test_files/one-line.txt", "./test_files/twinkle.txt"}
 
-	err := compareGrepAndMain(args)
+	err := compareParityWithGrep(args)
 
 	if err != nil {
 		t.Error(err)
@@ -127,7 +132,7 @@ func TestSomeFilesHaveMatches(t *testing.T) {
 func TestCaseInsensitive(t *testing.T) {
 	var args = []string{"-i", "twinkle", "./test_files/twinkle.txt"}
 
-	err := compareGrepAndMain(args)
+	err := compareParityWithGrep(args)
 
 	if err != nil {
 		t.Error(err)
@@ -137,7 +142,7 @@ func TestCaseInsensitive(t *testing.T) {
 func TestCountSingleFileMatches(t *testing.T) {
 	var args = []string{"-c", "twinkle", "./test_files/twinkle.txt"}
 
-	err := compareGrepAndMain(args)
+	err := compareParityWithGrep(args)
 
 	if err != nil {
 		t.Error(err)

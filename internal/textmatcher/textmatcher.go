@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	argparser "github.com/Moorad/go-grep/internal/arg_parser"
+	argparser "github.com/Moorad/go-grep/internal/argparser"
 	"github.com/Moorad/go-grep/internal/formatter"
 )
 
