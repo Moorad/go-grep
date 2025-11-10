@@ -4,16 +4,15 @@ import (
 	"bufio"
 	"fmt"
 	"regexp"
-	"strings"
 
 	argparser "github.com/Moorad/go-grep/internal/argparser"
 	"github.com/Moorad/go-grep/internal/formatter"
 )
 
 type MatchResult struct {
-	FileId int
-	File   string
-	Line   string
+	FileId  int
+	File    string
+	Matches *[]string
 }
 
 func Match(scanner *bufio.Scanner, fileId int, file string, pattern string, options *argparser.Options) (MatchResult, error) {
@@ -33,9 +32,9 @@ func Match(scanner *bufio.Scanner, fileId int, file string, pattern string, opti
 	}
 
 	return MatchResult{
-		FileId: fileId,
-		File:   file,
-		Line:   strings.Join(matches, "\n"),
+		FileId:  fileId,
+		File:    file,
+		Matches: &matches,
 	}, nil
 }
 
@@ -44,6 +43,10 @@ func findLineMatches(line string, pattern string, options *argparser.Options) ([
 
 	if options.IgnoreCase {
 		flags += "(?i)"
+	}
+
+	if options.WholeWord {
+		pattern = "\\b" + pattern + "\\b"
 	}
 
 	regex, err := regexp.Compile(flags + pattern)

@@ -24,9 +24,10 @@ There are 4 main benchmark tests. Each try to benchmark a different aspect of th
 - [x] Search multiple files for exact match
 - [x] Case insensitive matching (-i)
 - [x] Count number of matches (-c)
-- [ ] Match whole words (-w)
+- [x] Match whole words (-w)
 - [ ] Display only the matched patterns (-o)
 - [ ] Regular expressions
 - [ ] Glob search
 - [ ] Inverting the pattern (-v)
 - [ ] Search recursively in a directory
+- [ ] Concurrency and performance optimizations

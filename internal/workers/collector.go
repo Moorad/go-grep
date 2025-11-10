@@ -14,12 +14,15 @@ func CollectMatches(args argparser.Arguments, results []textmatcher.MatchResult)
 
 	for _, currentFile := range args.Files {
 		for _, result := range results {
-			if result.File == currentFile && result.Line != "" {
-				if len(args.Files) > 1 {
-					formatter.PrintMatchedFileName(&output, result.File)
+			if result.File == currentFile && len(*result.Matches) > 0 {
+				for _, line := range *result.Matches {
+					if len(args.Files) > 1 {
+						formatter.PrintMatchedFileName(&output, result.File)
+					}
+					output.WriteString(line)
+					output.WriteString("\n")
+
 				}
-				output.WriteString(result.Line)
-				output.WriteString("\n")
 				break
 			}
 		}
@@ -39,8 +42,8 @@ func CountMatches(args argparser.Arguments, results []textmatcher.MatchResult) s
 			fileCounter[result.FileId] = 0
 		}
 
-		if result.Line != "" {
-			fileCounter[result.FileId] += len(strings.Split(result.Line, "\n"))
+		if len(*result.Matches) > 0 {
+			fileCounter[result.FileId] += len(*result.Matches)
 		}
 	}
 

@@ -7,6 +7,9 @@ import (
 	"os/exec"
 	"strings"
 	"testing"
+
+	"github.com/Moorad/go-grep/cmd"
+	argparser "github.com/Moorad/go-grep/internal/argparser"
 )
 
 func grepRun(args ...string) (string, error) {
@@ -26,6 +29,8 @@ func compareParityWithGrep(args []string) error {
 
 	outputBuff := bytes.NewBufferString("")
 
+	rootCmd := cmd.NewRootCmd()
+	argparser.ParsedOptions = argparser.ParseOptions(rootCmd)
 	rootCmd.SetOut(outputBuff)
 	rootCmd.SetErr(outputBuff)
 	rootCmd.SetArgs(args)
@@ -37,6 +42,10 @@ func compareParityWithGrep(args []string) error {
 
 	if grepErr != nil && gogrepErr == nil {
 		return fmt.Errorf("Exit code mismatch\nExpected exit code = 1 but found exit code = 0 with output:\n%v", gogrepOutput)
+	}
+
+	if gogrepErr != nil && grepErr == nil {
+		return fmt.Errorf("Exit code mismatch\nExpected exit code = 0 with output\n%v\nbut found exit code = 1 with output:\n%v", grepOutput, gogrepErr.Error())
 	}
 
 	if grepOutput != gogrepOutput {
@@ -100,7 +109,7 @@ func TestMultipleMatches(t *testing.T) {
 }
 
 func TestMultipleFiles(t *testing.T) {
-	var args = []string{"world", "./test_files/one-line.txt", "./test_files/twinkle.txt"}
+	var args = []string{"or", "./test_files/one-line.txt", "./test_files/twinkle.txt"}
 
 	err := compareParityWithGrep(args)
 
@@ -191,6 +200,66 @@ func TestCountMultiFileNoMatch(t *testing.T) {
 
 func TestCountDuplicateFiles(t *testing.T) {
 	var args = []string{"-c", "twinkle", "./test_files/twinkle.txt", "./test_files/twinkle.txt"}
+
+	err := compareParityWithGrep(args)
+
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestWholeWordSingleFileMatches(t *testing.T) {
+	var args = []string{"-w", "do", "./test_files/sherlock-holm.txt"}
+
+	err := compareParityWithGrep(args)
+
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestWholeWordSingleFileNoMatch(t *testing.T) {
+	var args = []string{"-w", "twinkle", "./test_files/sherlock-holm.txt"}
+
+	err := compareParityWithGrep(args)
+
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestWholeWordMultiFileMatches(t *testing.T) {
+	var args = []string{"-w", "I", "./test_files/twinkle.txt", "./test_files/sherlock-holm.txt"}
+
+	err := compareParityWithGrep(args)
+
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestWholeWordMultiFileWithSingleMatch(t *testing.T) {
+	var args = []string{"-w", "twinkle", "./test_files/twinkle.txt", "./test_files/sherlock-holm.txt"}
+
+	err := compareParityWithGrep(args)
+
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestWholeWordIgnoreCase(t *testing.T) {
+	var args = []string{"-w", "-i", "how", "./test_files/sherlock-holm.txt", "./test_files/twinkle.txt"}
+
+	err := compareParityWithGrep(args)
+
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestWholeWordCountIgnoreCase(t *testing.T) {
+	var args = []string{"-w", "-i", "-c", "I", "./test_files/sherlock-holm.txt", "./test_files/twinkle.txt"}
 
 	err := compareParityWithGrep(args)
 

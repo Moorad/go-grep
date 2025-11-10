@@ -12,18 +12,23 @@ type Arguments struct {
 type Options struct {
 	IgnoreCase bool
 	Count      bool
+	WholeWord  bool
 }
 
 var ParsedOptions *Options
 
-func ParseOptions(rootCmd *cobra.Command) *Options {
-	parsedOptions := Options{
-		IgnoreCase: false,
-		Count:      false,
-	}
+var DefaultOptions = Options{
+	IgnoreCase: false,
+	Count:      false,
+	WholeWord:  false,
+}
 
-	rootCmd.Flags().BoolVarP(&parsedOptions.IgnoreCase, "ignore-case", "i", parsedOptions.IgnoreCase, "Ignore case sensitivity in patterns and data")
-	rootCmd.Flags().BoolVarP(&parsedOptions.Count, "count", "c", parsedOptions.IgnoreCase, "Print the count of selected lines per file")
+func ParseOptions(rootCmd *cobra.Command) *Options {
+	parsedOptions := DefaultOptions
+
+	rootCmd.Flags().BoolVarP(&parsedOptions.IgnoreCase, "ignore-case", "i", DefaultOptions.IgnoreCase, "Ignore case sensitivity in patterns and data")
+	rootCmd.Flags().BoolVarP(&parsedOptions.Count, "count", "c", DefaultOptions.IgnoreCase, "Print the count of selected lines per file")
+	rootCmd.Flags().BoolVarP(&parsedOptions.WholeWord, "word-regexp", "w", DefaultOptions.WholeWord, "Match the whole word when pattern matches part of a word")
 
 	return &parsedOptions
 }
