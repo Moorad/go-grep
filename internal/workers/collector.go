@@ -29,27 +29,27 @@ func CollectMatches(args argparser.Arguments, results []textmatcher.MatchResult)
 }
 
 func CountMatches(args argparser.Arguments, results []textmatcher.MatchResult) string {
-	var fileCounter = make(map[string]int)
+	var fileCounter = make(map[int]int)
 	var output strings.Builder
 
-	for i := 0; i < len(results); i++ {
-		_, ok := fileCounter[results[i].File]
+	for _, result := range results {
+		_, ok := fileCounter[result.FileId]
 
 		if !ok {
-			fileCounter[results[i].File] = 0
+			fileCounter[result.FileId] = 0
 		}
 
-		if results[i].Line != "" {
-			fileCounter[results[i].File] += len(strings.Split(results[i].Line, "\n"))
+		if result.Line != "" {
+			fileCounter[result.FileId] += len(strings.Split(result.Line, "\n"))
 		}
 	}
 
 	// Looping through args.Files instead of fileCounter because fileCounter is not sorted by insertion
-	for _, currentFile := range args.Files {
-		count := fileCounter[currentFile]
+	for i, file := range args.Files {
+		count := fileCounter[i]
 
 		if len(args.Files) > 1 {
-			formatter.PrintMatchedFileName(&output, currentFile)
+			formatter.PrintMatchedFileName(&output, file)
 		}
 		output.WriteString(fmt.Sprint(count))
 		output.WriteString("\n")

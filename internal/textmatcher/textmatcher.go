@@ -11,11 +11,12 @@ import (
 )
 
 type MatchResult struct {
-	File string
-	Line string
+	FileId int
+	File   string
+	Line   string
 }
 
-func Match(scanner *bufio.Scanner, file string, pattern string, options *argparser.Options) (MatchResult, error) {
+func Match(scanner *bufio.Scanner, fileId int, file string, pattern string, options *argparser.Options) (MatchResult, error) {
 	var matches = []string{}
 
 	for scanner.Scan() {
@@ -32,8 +33,9 @@ func Match(scanner *bufio.Scanner, file string, pattern string, options *argpars
 	}
 
 	return MatchResult{
-		File: file,
-		Line: strings.Join(matches, "\n"),
+		FileId: fileId,
+		File:   file,
+		Line:   strings.Join(matches, "\n"),
 	}, nil
 }
 

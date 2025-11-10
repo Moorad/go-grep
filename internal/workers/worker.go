@@ -28,6 +28,7 @@ func Wait(eg *errgroup.Group) error {
 }
 
 func worker(pattern string, files chan string, results chan textmatcher.MatchResult) error {
+	fileId := 0
 	for filePath := range files {
 		scanner, file, err := fileparser.Parse(filePath)
 
@@ -37,12 +38,12 @@ func worker(pattern string, files chan string, results chan textmatcher.MatchRes
 
 		defer file.Close()
 
-		matchedLines, err := textmatcher.Match(scanner, filePath, pattern, argparser.ParsedOptions)
+		matchedLines, err := textmatcher.Match(scanner, fileId, filePath, pattern, argparser.ParsedOptions)
 
 		if err != nil {
 			return err
 		}
-
+		fileId++
 		results <- matchedLines
 	}
 

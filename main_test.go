@@ -188,3 +188,13 @@ func TestCountMultiFileNoMatch(t *testing.T) {
 		t.Error(err)
 	}
 }
+
+func TestCountDuplicateFiles(t *testing.T) {
+	var args = []string{"-c", "twinkle", "./test_files/twinkle.txt", "./test_files/twinkle.txt"}
+
+	err := compareParityWithGrep(args)
+
+	if err != nil {
+		t.Error(err)
+	}
+}

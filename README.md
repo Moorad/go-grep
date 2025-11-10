@@ -23,7 +23,7 @@ There are 4 main benchmark tests. Each try to benchmark a different aspect of th
 - [x] Setup pipeline and auto-release
 - [x] Search multiple files for exact match
 - [x] Case insensitive matching (-i)
-- [ ] Count number of matches (-c)
+- [x] Count number of matches (-c)
 - [ ] Match whole words (-w)
 - [ ] Display only the matched patterns (-o)
 - [ ] Regular expressions
