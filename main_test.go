@@ -22,22 +22,22 @@ func grepRun(args ...string) (string, error) {
 }
 
 func compareParityWithGrep(args []string) error {
-	grepOutput, err := grepRun(args...)
-
-	if err != nil {
-		return err
-	}
+	grepOutput, grepErr := grepRun(args...)
 
 	outputBuff := bytes.NewBufferString("")
 
 	rootCmd.SetOut(outputBuff)
 	rootCmd.SetErr(outputBuff)
 	rootCmd.SetArgs(args)
-	rootCmd.Execute()
+	gogrepErr := rootCmd.Execute()
 
-	output, err := io.ReadAll(outputBuff)
+	output, _ := io.ReadAll(outputBuff)
 
 	gogrepOutput := string(output)
+
+	if grepErr != nil && gogrepErr == nil {
+		return fmt.Errorf("Exit code mismatch\nExpected exit code = 1 but found exit code = 0 with output:\n%v", gogrepOutput)
+	}
 
 	if grepOutput != gogrepOutput {
 		return fmt.Errorf("Output mismatch\nExpected:\n%v\nFound:\n%v", grepOutput, gogrepOutput)
@@ -61,6 +61,16 @@ func TestCheckGrepInstalled(t *testing.T) {
 
 func TestSingleLineFile(t *testing.T) {
 	var args = []string{"Hello", "./test_files/one-line.txt"}
+
+	err := compareParityWithGrep(args)
+
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestNoMatches(t *testing.T) {
+	var args = []string{"Hello", "./test_files/twinkle.txt"}
 
 	err := compareParityWithGrep(args)
 
@@ -161,6 +171,16 @@ func TestCountMultiFileMatches(t *testing.T) {
 
 func TestCountMultiFileWithSingleFileMatch(t *testing.T) {
 	var args = []string{"-c", "twinkle", "./test_files/one-line.txt", "./test_files/twinkle.txt"}
+
+	err := compareParityWithGrep(args)
+
+	if err != nil {
+		t.Error(err)
+	}
+}
+
+func TestCountMultiFileNoMatch(t *testing.T) {
+	var args = []string{"-c", "x", "./test_files/one-line.txt", "./test_files/twinkle.txt"}
 
 	err := compareParityWithGrep(args)
 

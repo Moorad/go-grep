@@ -14,10 +14,15 @@ import (
 const workerPoolSize = 5
 
 var rootCmd = &cobra.Command{
-	Use:   "gogrep [pattern] [...files]",
-	Short: "A simple clone of grep written in go",
-	Args:  cobra.MinimumNArgs(2),
-	RunE:  runGrep,
+	Use:           "gogrep [pattern] [...files]",
+	Short:         "A simple clone of grep written in go",
+	Args:          cobra.MinimumNArgs(2),
+	SilenceErrors: true,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		cmd.SilenceUsage = true
+		return nil
+	},
+	RunE: runGrep,
 }
 
 func init() {
@@ -56,6 +61,19 @@ func runGrep(cmd *cobra.Command, args []string) error {
 	matchResults := []textmatcher.MatchResult{}
 	for i := 0; i < numOfFiles; i++ {
 		matchResults = append(matchResults, <-results)
+	}
+
+	noMatches := true
+	for _, result := range matchResults {
+		if result.Line != "" {
+			noMatches = false
+			break
+		}
+	}
+
+	if noMatches {
+		return fmt.Errorf("")
+
 	}
 
 	var output string
